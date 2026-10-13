@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DSRM Mathematical Companion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], tags: 'none' },
+  svg: { fontCache: 'global' },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg-full.js" async></script>
+<style>
+/* Layout: matches the conversion deck. Navy bands top and bottom, mono blue section labels,
+   serif mathematics. Sticky contents rail on wide screens, chip row on phones. */
+:root {
+  --bg: #f6f8fb;
+  --panel: #ffffff;
+  --fg: #16213a;
+  --muted: #56627a;
+  --rule: #d8deea;
+  --navy: #1b3a62;
+  --on-navy: #f2f5fa;
+  --label: #2c68c9;
+  --stage: #2d8656;
+  --tint: #eaf0fa;
+  --serif: "Source Serif 4", "Source Serif Pro", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1520; --panel: #141d2c; --fg: #e2e8f2; --muted: #9aa7bd; --rule: #263248;
+    --navy: #17304f; --on-navy: #e8eef8; --label: #82b2ff; --stage: #6fd09a; --tint: #1a2740;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1520; --panel: #141d2c; --fg: #e2e8f2; --muted: #9aa7bd; --rule: #263248;
+  --navy: #17304f; --on-navy: #e8eef8; --label: #82b2ff; --stage: #6fd09a; --tint: #1a2740;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 16px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--serif); font-size: 17px; line-height: 1.6;
+}
+a { color: var(--label); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--label); outline-offset: 2px; }
+
+.band { background: var(--navy); color: var(--on-navy); }
+.band-top { height: 14px; }
+header.hero { padding-inline: 16px; padding-block: 40px 28px; }
+.hero-inner { max-width: 1180px; margin: 0 auto; }
+.eyebrow, .label {
+  font-family: var(--mono); font-size: 0.78rem; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--label);
+}
+h1 {
+  font-size: clamp(1.9rem, 4.2vw, 2.8rem); line-height: 1.15; margin: 10px 0 12px;
+  font-weight: 700; text-wrap: balance; max-width: 22ch;
+}
+.lede { max-width: 64ch; color: var(--muted); margin: 0; font-size: 1.05rem; }
+
+.pipeline {
+  display: flex; flex-wrap: wrap; align-items: stretch; gap: 10px; margin-top: 28px;
+}
+.stage-box {
+  flex: 1 1 200px; min-width: 0; background: var(--panel); border: 1px solid var(--rule);
+  padding: 14px 16px; border-radius: 4px;
+}
+.stage-box .label { font-size: 0.7rem; }
+.stage-box strong { display: block; font-size: 1.05rem; margin: 4px 0 2px; }
+.stage-box span { color: var(--muted); font-size: 0.92rem; line-height: 1.45; display: block; }
+.arrow { align-self: center; font-family: var(--mono); color: var(--label); font-size: 1.2rem; }
+@media (max-width: 720px) { .arrow { display: none; } }
+
+.wrap {
+  max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 8px 48px;
+  display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px;
+}
+nav.toc { position: sticky; top: env(safe-area-inset-top, 0px); align-self: start; padding-top: 28px; }
+nav.toc ol { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 2px; }
+nav.toc a {
+  display: block; text-decoration: none; color: var(--muted); font-family: var(--mono);
+  font-size: 0.8rem; padding: 5px 8px; border-left: 2px solid transparent;
+}
+nav.toc a:hover { color: var(--fg); border-left-color: var(--label); }
+@media (max-width: 900px) {
+  .wrap { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  nav.toc { position: static; padding-top: 18px; }
+  nav.toc ol { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; }
+  nav.toc a { white-space: nowrap; border: 1px solid var(--rule); border-radius: 999px; padding: 4px 10px; background: var(--panel); }
+}
+
+main { min-width: 0; }
+section { padding-top: 36px; border-bottom: 1px solid var(--rule); padding-bottom: 32px; }
+section:last-child { border-bottom: 0; }
+h2 { font-size: 1.55rem; line-height: 1.25; margin: 6px 0 14px; text-wrap: balance; }
+h3 { font-size: 1.12rem; margin: 26px 0 8px; }
+h3 .stagehead { color: var(--stage); }
+p, li { max-width: 68ch; }
+p { margin: 0 0 12px; }
+.note { color: var(--muted); font-size: 0.93rem; font-style: italic; }
+
+.eq {
+  overflow-x: auto; overflow-y: hidden; padding: 6px 0; margin: 6px 0 10px;
+}
+.eq mjx-container[display="true"] { margin: 0.4em 0 !important; text-align: left !important; }
+
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 8px 32px; }
+dl.notation { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 14px; align-items: baseline; }
+dl.notation dt { white-space: nowrap; }
+dl.notation dd { margin: 0; color: var(--fg); font-size: 0.97rem; }
+
+.cons { list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 0; }
+.cons li { max-width: none; display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 4px 12px; padding: 14px 0; border-top: 1px solid var(--rule); }
+.cons .cid { font-family: var(--mono); font-size: 0.8rem; color: var(--label); font-weight: 600; padding-top: 3px; }
+.cons .cname { font-weight: 600; }
+.cons .eq { margin: 2px 0 4px; }
+.cons .why { color: var(--muted); font-size: 0.94rem; margin: 0; }
+
+.table-wrap { overflow-x: auto; margin: 10px 0 14px; }
+table { border-collapse: collapse; width: 100%; font-size: 0.93rem; }
+th, td { text-align: left; padding: 7px 12px 7px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; padding-right: 0; padding-left: 12px; }
+
+.callout { background: var(--tint); padding: 14px 18px; border-radius: 4px; margin: 14px 0; }
+.callout p:last-child { margin-bottom: 0; }
+
+.steps { counter-reset: s; list-style: none; padding: 0; margin: 10px 0; display: grid; gap: 10px; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; }
+.steps li::before { content: counter(s); font-family: var(--mono); color: var(--label); font-weight: 600; font-size: 0.85rem; padding-top: 2px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 12px; padding: 0; list-style: none; }
+.chips li { font-family: var(--mono); font-size: 0.78rem; border: 1px solid var(--rule); background: var(--panel); padding: 3px 9px; border-radius: 999px; }
+.pass { color: var(--stage); font-family: var(--mono); font-size: 0.78rem; font-weight: 600; }
+
+footer.band { padding-inline: 16px; padding-block: 18px; font-family: var(--mono); font-size: 0.75rem; }
+footer .inner { max-width: 1180px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+</style>
+</head>
+<body>
+<div class="band band-top" aria-hidden="true"></div>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">PhD conversion · Stellenbosch University · Mathematical companion</div>
+    <h1>Decision Support for Reagent Mapping (DSRM)</h1>
+    <p class="lede">The full mathematics behind the presentation. A LightGBM model forecasts daily demand per test type. A rolling-horizon mixed-integer program decides which reagent bottles to load onto which Roche cobas 8000 module, and when. A closed-loop evaluator then tests each plan against what actually happened.</p>
+    <div class="pipeline" aria-label="DSRM pipeline">
+      <div class="stage-box"><div class="label">Predict</div><strong>Demand forecast</strong><span>One Poisson LightGBM model per test type gives \(F_{h,t}\), tests per day.</span></div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="stage-box"><div class="label">Optimise</div><strong>Rolling-horizon MIP</strong><span>Seven-day window, three lexicographic stages. Only day one is implemented.</span></div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="stage-box"><div class="label">Execute</div><strong>Closed-loop evaluation</strong><span>Day one's fixed configuration meets realised demand. The real bottle state carries forward.</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="toc" aria-label="Contents">
+    <div class="label">Contents</div>
+    <ol>
+      <li><a href="#notation">Notation</a></li>
+      <li><a href="#forecast">Forecasting model</a></li>
+      <li><a href="#mip">Allocation MIP</a></li>
+      <li><a href="#objective">Objective stages</a></li>
+      <li><a href="#rolling">Rolling horizon</a></li>
+      <li><a href="#closedloop">Closed-loop evaluation</a></li>
+      <li><a href="#vnv">Verification</a></li>
+      <li><a href="#experiments">Experiments</a></li>
+      <li><a href="#params">Case parameters</a></li>
+      <li><a href="#phd">Doctoral phase</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <!-- NOTATION -->
+    <section id="notation">
+      <div class="label">01 · Sets, parameters and variables</div>
+      <h2>Notation</h2>
+      <p>Each reagent bottle is tracked as an individual object across the planning window. A bottle belongs to one reagent option: a pairing of a test with the module it runs on. A test can have options on more than one module, which is how substitution enters the model.</p>
+
+      <div class="grid2">
+        <div>
+          <h3>Sets and indices</h3>
+          <dl class="notation">
+            <dt>\(h \in \mathcal{H}\)</dt><dd>test types (model items)</dd>
+            <dt>\(j \in \mathcal{J}\)</dt><dd>analyser modules: c502, c702, e801</dd>
+            <dt>\((h,j) \in \mathcal{O}\)</dt><dd>reagent options, \(\mathcal{O} \subseteq \mathcal{H}\times\mathcal{J}\)</dd>
+            <dt>\(t \in \mathcal{T}_w\)</dt><dd>days in rolling window \(w\), \(\mathcal{T}_w = \{t_w,\dots,t_w+L-1\}\)</dd>
+            <dt>\(b \in \mathcal{B}_w\)</dt><dd>bottles in window \(w\): carryover bottles \(\mathcal{B}^{\text{carry}}_w\) plus new candidates \(\mathcal{B}^{\text{cand}}_w\)</dd>
+            <dt>\(\mathcal{B}_h,\ \mathcal{B}_j\)</dt><dd>bottles serving test \(h\); bottles on module \(j\)</dd>
+          </dl>
+
+          <h3>Parameters</h3>
+          <dl class="notation">
+            <dt>\(F_{h,t}\)</dt><dd>forecast demand for test \(h\) on day \(t\)</dd>
+            <dt>\(\delta_b\)</dt><dd>yield: tests per bottle, from its option \((h_b,j_b)\)</dd>
+            <dt>\(\ell_b\)</dt><dd>onboard life (days)</dd>
+            <dt>\(c_b\)</dt><dd>bottle purchase cost (CZK)</dd>
+            <dt>\(RK_j\)</dt><dd>reagent slot capacity of module type \(j\)</dd>
+            <dt>\(\Theta_j\)</dt><dd>daily throughput ceiling of module type \(j\)</dd>
+            <dt>\(R^0_b,\ a^0_b\)</dt><dd>remaining content and age carried into the window</dd>
+            <dt>\(M_b\)</dt><dd>per-bottle big-\(M\): \(\max(\ell_b,\ a^0_b+|\mathcal{T}_w|+1)+1\)</dd>
+            <dt>\(\rho\)</dt><dd>within-window discount, \(\rho=0.98\), day weight \(\omega_t=\rho^{\,t-t_w}\)</dd>
+            <dt>\(\lambda_c,\lambda_\ell,\lambda_d\)</dt><dd>Stage 2 weights: cost, reagent loss, openings</dd>
+          </dl>
+        </div>
+        <div>
+          <h3>State variables (binary)</h3>
+          <dl class="notation">
+            <dt>\(y^{\text{on}}_{b,t}\)</dt><dd>bottle is onboard during operating day \(t\)</dd>
+            <dt>\(y^{\text{new}}_{b,t}\)</dt><dd>bottle is still unopened</dd>
+            <dt>\(y^{\text{dis}}_{b,t}\)</dt><dd>bottle has been discarded</dd>
+          </dl>
+          <h3>Transition variables (binary)</h3>
+          <dl class="notation">
+            <dt>\(o_{b,t}\)</dt><dd>bottle is opened and loaded in the changeover before day \(t\)</dd>
+            <dt>\(d_{b,t}\)</dt><dd>bottle is removed in that changeover</dd>
+            <dt>\(u_{b,t}\)</dt><dd>bottle may be used on day \(t\)</dd>
+          </dl>
+          <h3>Content, demand and age</h3>
+          <dl class="notation">
+            <dt>\(R_{b,t} \ge 0\)</dt><dd>reagent left after day \(t\) (in tests)</dd>
+            <dt>\(v_{b,t} \ge 0\)</dt><dd>tests run from bottle \(b\) on day \(t\)</dd>
+            <dt>\(L_{b,t} \ge 0\)</dt><dd>reagent lost on removal</dd>
+            <dt>\(z_{h,t} \ge 0\)</dt><dd>demand served</dd>
+            <dt>\(U_{h,t} \ge 0\)</dt><dd>demand uncovered</dd>
+            <dt>\(\text{age}_{b,t} \in \mathbb{Z}_{\ge 0}\)</dt><dd>days onboard</dd>
+          </dl>
+        </div>
+      </div>
+      <p class="note">Timing convention: removals and loadings happen in the normal end-of-day changeover, which configures the next operating day. A term written with \(t-1\) on the first window day takes its initial value: \(y^{\text{on}}=1\) for carryover bottles, \(y^{\text{new}}=1\) for candidates, \(R=R^0_b\), \(\text{age}=a^0_b\).</p>
+    </section>
+
+    <!-- FORECAST -->
+    <section id="forecast">
+      <div class="label">02 · Predict</div>
+      <h2>Forecasting model</h2>
+      <p>The target is the daily count of tests of type \(h\), \(y_{h,t}\), from two years (2023 to 2024) of laboratory information system records on two cobas 8000 analysers. After cleaning and de-duplication, 5.36 million test records remain. Three anomalous periods are trimmed: a data gap in November 2023 and the two December shutdowns. A separate model is trained per test type; 93 test types have enough history to evaluate.</p>
+
+      <h3>Target-history features</h3>
+      <p>Every feature uses only information available before day \(t\).</p>
+      <div class="eq">\[ \text{lag}_k = y_{h,t-k}, \quad k \in \{1,\dots,6,\ 364\} \]</div>
+      <div class="eq">\[ m^{W}_{h,t} = \frac{1}{W}\sum_{i=1}^{W} y_{h,t-i}, \qquad s^{W}_{h,t} = \sqrt{\frac{1}{W}\sum_{i=1}^{W}\big(y_{h,t-i}-m^{W}_{h,t}\big)^2}, \qquad W \in \{7,14,28,56,90\} \]</div>
+      <p>Rolling means over short windows are noisy for low-volume tests, so a shrunk mean pulls them toward the long-run expanding mean \(\bar y_{h,t}\):</p>
+      <div class="eq">\[ \tilde m^{W}_{h,t} = \frac{\kappa\,\bar y_{h,t} + \sum_{i=1}^{n_W} y_{h,t-i}}{\kappa + n_W}, \qquad \kappa = W \in \{7, 14\} \]</div>
+      <p>Rolling minimum and maximum over 7 and 28 days, a 30-day rolling mean, and days since the last non-zero count complete this group.</p>
+
+      <h3>Calendar and workload features</h3>
+      <div class="eq">\[ \big(\sin\tfrac{2\pi\,\text{dow}_t}{7},\ \cos\tfrac{2\pi\,\text{dow}_t}{7}\big), \qquad \big(\sin\tfrac{2\pi\,\text{moy}_t}{12},\ \cos\tfrac{2\pi\,\text{moy}_t}{12}\big) \]</div>
+      <p>Plus day of week, month, quarter, week of year, weekend, Monday and Czech public holiday flags, yesterday's laboratory-wide volume, the laboratory-wide total over the previous seven days, and a high-load flag.</p>
+
+      <h3>Panel and solo features</h3>
+      <p>Tests are ordered together. A liver panel brings ALT, AST, ALP, GGT and bilirubin on the same sample. Thirteen panels are defined with anchor, core and extended test sets, plus eleven solo tests. For panel \(p\):</p>
+      <div class="eq">\[ A_{p,t} = \#\{\text{samples on day } t \text{ with at least one anchor test of } p\}, \qquad C_{p,t} = \sum_{h \in \text{core}(p)} y_{h,t}, \qquad E_{p,t} = \sum_{h \in \text{ext}(p)} y_{h,t} \]</div>
+      <p>Only lagged and rolled versions enter the model (lags 1, 7, 14, 28, 364; rolling mean, standard deviation and shrunk mean over 7, 28, 56, 90 days). Same-day panel totals are excluded to prevent leakage. The final model uses 39 base features and 750 panel and solo features.</p>
+
+      <h3>Learning objective</h3>
+      <p>Counts are non-negative and right-skewed, so LightGBM fits a Poisson model with a log link. The prediction after \(M\) trees is</p>
+      <div class="eq">\[ \hat y_{h,t} = \exp\!\Big(\sum_{m=1}^{M} \eta\, f_m(\mathbf{x}_{h,t})\Big) \]</div>
+      <p>and each tree \(f_m\) is grown leaf-wise to reduce the Poisson negative log-likelihood, with gradient and Hessian per observation:</p>
+      <div class="eq">\[ \mathcal{L} = \sum_i \big(e^{\hat F_i} - y_i \hat F_i\big), \qquad g_i = e^{\hat F_i} - y_i, \qquad h_i = e^{\hat F_i} \]</div>
+      <div class="eq">\[ \text{Gain} = \tfrac12\left[\frac{G_L^2}{H_L+\lambda} + \frac{G_R^2}{H_R+\lambda} - \frac{(G_L+G_R)^2}{H_L+H_R+\lambda}\right], \qquad w^\ast = -\frac{G}{H+\lambda} \]</div>
+      <p class="note">\(G\) and \(H\) are sums of \(g_i\) and \(h_i\) in a leaf. The L1 penalty \(\alpha\) soft-thresholds \(G\) before the leaf weight is computed.</p>
+
+      <h3>Hyperparameters</h3>
+      <p>Tuned with Optuna's tree-structured Parzen estimator: 75 trials on 20 representative test types, three rolling folds each.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Parameter</th><th>Search range</th><th class="num">Selected</th></tr></thead>
+        <tbody>
+          <tr><td>Trees \(M\)</td><td>200 to 2000</td><td class="num">1172</td></tr>
+          <tr><td>Learning rate \(\eta\)</td><td>0.01 to 0.15 (log)</td><td class="num">0.0503</td></tr>
+          <tr><td>Leaves per tree</td><td>8 to 128</td><td class="num">49</td></tr>
+          <tr><td>Maximum depth</td><td>3 to 12</td><td class="num">4</td></tr>
+          <tr><td>Minimum data per leaf</td><td>5 to 50</td><td class="num">8</td></tr>
+          <tr><td>Row subsample</td><td>0.5 to 1.0</td><td class="num">0.647</td></tr>
+          <tr><td>Column subsample</td><td>0.5 to 1.0</td><td class="num">0.694</td></tr>
+          <tr><td>L2 penalty \(\lambda\)</td><td>\(10^{-4}\) to 10 (log)</td><td class="num">0.000123</td></tr>
+          <tr><td>L1 penalty \(\alpha\)</td><td>\(10^{-4}\) to 10 (log)</td><td class="num">0.293</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Validation and accuracy</h3>
+      <p>Rolling-origin cross-validation anchored on Mondays. Each fold trains on everything before the origin (at least 365 days) and validates on the next four weeks. Five folds are spread evenly across the eligible origins, all in 2024.</p>
+      <div class="eq">\[ \text{sMAPE} = \frac{100}{n}\sum_{i=1}^{n}\frac{2\,|\hat y_i - y_i|}{|y_i| + |\hat y_i|}, \qquad \text{MAE} = \frac1n\sum|\hat y_i - y_i|, \qquad \text{RMSE} = \sqrt{\tfrac1n\sum(\hat y_i - y_i)^2} \]</div>
+      <div class="eq">\[ d = 1 - \frac{\sum (y_i - \hat y_i)^2}{\sum \big(|\hat y_i - \bar y| + |y_i - \bar y|\big)^2} \qquad \text{(Willmott index of agreement)} \]</div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Group</th><th class="num">Tests</th><th class="num">Mean sMAPE</th><th class="num">Median sMAPE</th><th class="num">Mean MAE</th></tr></thead>
+        <tbody>
+          <tr><td>All test types</td><td class="num">93</td><td class="num">26.19%</td><td class="num">21.84%</td><td class="num">10.51</td></tr>
+          <tr><td>Regular demand (≥ 10 per day)</td><td class="num">75</td><td class="num">21.16%</td><td class="num">19.66%</td><td class="num">12.58</td></tr>
+          <tr><td>Intermittent demand (&lt; 10 per day)</td><td class="num">18</td><td class="num">47.13%</td><td class="num">48.10%</td><td class="num">1.91</td></tr>
+        </tbody>
+      </table></div>
+      <p>Aggregated across all test types and folds, the model predicted 1,111,683 tests against 1,139,931 actual (portfolio sMAPE 2.51%, \(d = 0.9991\), \(R^2 = 0.9963\) on fold-level totals).</p>
+    </section>
+
+    <!-- MIP -->
+    <section id="mip">
+      <div class="label">03 · Optimise</div>
+      <h2>Allocation MIP: constraints</h2>
+      <p>One window is solved per day in IBM CPLEX through DOcplex. All constraints hold for every bottle \(b \in \mathcal{B}_w\) and day \(t \in \mathcal{T}_w\) unless stated otherwise.</p>
+
+      <ol class="cons">
+        <li><div class="cid">C1</div><div>
+          <div class="cname">State exclusivity</div>
+          <div class="eq">\[ y^{\text{on}}_{b,t} + y^{\text{new}}_{b,t} + y^{\text{dis}}_{b,t} = 1 \]</div>
+          <p class="why">Every bottle is in exactly one state: unopened, onboard or discarded.</p>
+        </div></li>
+        <li><div class="cid">C2</div><div>
+          <div class="cname">Transition sources</div>
+          <div class="eq">\[ o_{b,t} \le y^{\text{new}}_{b,t-1}, \qquad d_{b,t} \le y^{\text{on}}_{b,t-1} \]</div>
+          <p class="why">Only an unopened bottle can be loaded. Only a bottle that was onboard can be removed.</p>
+        </div></li>
+        <li><div class="cid">C3</div><div>
+          <div class="cname">State balance</div>
+          <div class="eq">\[ y^{\text{new}}_{b,t} = y^{\text{new}}_{b,t-1} - o_{b,t}, \qquad y^{\text{on}}_{b,t} = y^{\text{on}}_{b,t-1} + o_{b,t} - d_{b,t}, \qquad y^{\text{dis}}_{b,t} = y^{\text{dis}}_{b,t-1} + d_{b,t} \]</div>
+          <p class="why">States change only through loading and removal events, so a discarded bottle can never return.</p>
+        </div></li>
+        <li><div class="cid">C4</div><div>
+          <div class="cname">No empty carryover</div>
+          <div class="eq">\[ R_{b,t-1} + \delta_b\, o_{b,t} \ge \varepsilon_R\, y^{\text{on}}_{b,t}, \qquad \varepsilon_R = 10^{-6} \]</div>
+          <p class="why">A bottle that enters the changeover empty must come off rather than occupy a slot.</p>
+        </div></li>
+        <li><div class="cid">C5</div><div>
+          <div class="cname">Usability and expiry for use</div>
+          <div class="eq">\[ u_{b,t} \le y^{\text{on}}_{b,t}, \qquad \text{age}_{b,t-1} \le (\ell_b - 1) + M_b\,(1 - u_{b,t}) \]</div>
+          <p class="why">Only an onboard bottle inside its onboard life can be used. A freshly loaded bottle has age zero and is usable on its first day.</p>
+        </div></li>
+        <li><div class="cid">C6</div><div>
+          <div class="cname">Forced removal at expiry</div>
+          <div class="eq">\[ \text{age}_{b,t-1} \le (\ell_b - 1) + M_b\,(1 - y^{\text{on}}_{b,t}) \]</div>
+          <p class="why">An expired bottle cannot stay onboard. Any reagent left inside is recorded as loss.</p>
+        </div></li>
+        <li><div class="cid">C7</div><div>
+          <div class="cname">Content balance</div>
+          <div class="eq">\[ R_{b,t} = R_{b,t-1} + \delta_b\, o_{b,t} - v_{b,t} - L_{b,t} \]</div>
+          <p class="why">Reagent is conserved: what was there plus what was loaded equals what was used, what remains and what was lost.</p>
+        </div></li>
+        <li><div class="cid">C8</div><div>
+          <div class="cname">Consumption bounds</div>
+          <div class="eq">\[ v_{b,t} \le \delta_b\, u_{b,t}, \qquad v_{b,t} \le R_{b,t-1} + \delta_b\, o_{b,t} \]</div>
+          <p class="why">A bottle can only run tests if it is usable and has content.</p>
+        </div></li>
+        <li><div class="cid">C9</div><div>
+          <div class="cname">Remaining content only while onboard</div>
+          <div class="eq">\[ 0 \le R_{b,t} \le \delta_b\, y^{\text{on}}_{b,t} \]</div>
+          <p class="why">Once a bottle is removed, its remaining content is zero, which pushes leftover reagent into \(L_{b,t}\) through C7.</p>
+        </div></li>
+        <li><div class="cid">C10</div><div>
+          <div class="cname">Loss only on removal</div>
+          <div class="eq">\[ L_{b,t} \le \delta_b\, d_{b,t} \]</div>
+          <p class="why">Reagent is only lost when a bottle comes off. Waste is measured, not forbidden.</p>
+        </div></li>
+        <li><div class="cid">C11</div><div>
+          <div class="cname">Age progression</div>
+          <div class="eq">\[ \text{age}_{b,t-1} + 1 - M_b(1 - y^{\text{on}}_{b,t}) \;\le\; \text{age}_{b,t} \;\le\; \text{age}_{b,t-1} + 1 + M_b(1 - y^{\text{on}}_{b,t}), \qquad \text{age}_{b,t} \le (M_b - 1)\, y^{\text{on}}_{b,t} \]</div>
+          <p class="why">Age rises by one for each day onboard and resets to zero once the bottle is off. The big-\(M\) is set per bottle, which keeps short-life reagents tight.</p>
+        </div></li>
+        <li><div class="cid">C12</div><div>
+          <div class="cname">Rack slot capacity</div>
+          <div class="eq">\[ \sum_{b \in \mathcal{B}_j} y^{\text{on}}_{b,t} \le RK_j \qquad \forall j, t \]</div>
+          <p class="why">Counts bottles onboard at the same time after the changeover. An outgoing bottle and its replacement share one slot in sequence.</p>
+        </div></li>
+        <li><div class="cid">C13</div><div>
+          <div class="cname">Daily throughput</div>
+          <div class="eq">\[ \sum_{b \in \mathcal{B}_j} v_{b,t} \le \Theta_j \qquad \forall j, t \]</div>
+          <p class="why">A module can have free slots and still be unable to process more tests in an eight-hour day.</p>
+        </div></li>
+        <li><div class="cid">C14</div><div>
+          <div class="cname">Demand balance</div>
+          <div class="eq">\[ z_{h,t} = \sum_{b \in \mathcal{B}_h} v_{b,t}, \qquad z_{h,t} + U_{h,t} = F_{h,t} \qquad \forall h, t \]</div>
+          <p class="why">Demand for a test can be served from any of its options on any module. What cannot be served is reported honestly as uncovered.</p>
+        </div></li>
+        <li><div class="cid">C15</div><div>
+          <div class="cname">Symmetry breaking</div>
+          <div class="eq">\[ \sum_{\tau \le t} o_{k,\tau} \le \sum_{\tau \le t} o_{k-1,\tau} \qquad \text{for consecutive candidates } k-1, k \text{ of the same option} \]</div>
+          <p class="why">Identical candidate bottles open in a fixed order, which removes equivalent solutions from the branch-and-bound tree.</p>
+        </div></li>
+      </ol>
+      <p class="note">Domains: \(y, o, d, u\) binary; \(R, v, L, z, U\) continuous and non-negative; age integer.</p>
+    </section>
+
+    <!-- OBJECTIVE -->
+    <section id="objective">
+      <div class="label">04 · Optimise</div>
+      <h2>Objective: three lexicographic stages</h2>
+      <p>Service comes first. Each stage fixes its optimum as a constraint before the next stage is solved.</p>
+
+      <h3><span class="stagehead">Stage 1A</span> · protect today's service</h3>
+      <div class="eq">\[ U^{\ast}_{1} = \min \sum_{h} U_{h,t_w} \quad \text{then add} \quad \sum_h U_{h,t_w} \le U^{\ast}_{1} \]</div>
+      <p>Only day one is ever implemented. Without this stage, a window-total objective could push unavoidable shortage onto today to make a later, never-executed day look better.</p>
+
+      <h3><span class="stagehead">Stage 1B</span> · best service over the window</h3>
+      <div class="eq">\[ U^{\ast} = \min \sum_{h}\sum_{t \in \mathcal{T}_w} U_{h,t} \;+\; \varepsilon_w \sum_{b,t} L_{b,t}, \qquad \varepsilon_w = \frac{1}{\sum_b \delta_b + 1} \quad \text{then add} \quad \sum_{h,t} U_{h,t} \le U^{\ast} \]</div>
+      <p>The tiny loss term only breaks ties between equally good service plans. It is too small to ever trade one served test for less waste.</p>
+
+      <h3><span class="stagehead">Stage 2</span> · cost and disruption</h3>
+      <div class="eq">\[ \min \sum_{t \in \mathcal{T}_w} \omega_t \Big[\ \lambda_c \sum_b c_b\, o_{b,t} \;+\; \lambda_\ell \sum_b \frac{c_b}{\delta_b}\, L_{b,t} \;+\; \lambda_d \sum_b o_{b,t}\ \Big] \]</div>
+      <p>The two objectives from the SAIIE36 paper, reagent cost and bottle-opening disruption, with discarded reagent valued at its per-test cost. Bottle openings are the disruption proxy. Weights: \(\lambda_c = 1\), \(\lambda_\ell = 30\), \(\lambda_d = 5000\), chosen by sensitivity testing (Experiments 11 to 13).</p>
+
+      <div class="table-wrap"><table>
+        <thead><tr><th>Stage</th><th class="num">Relative MIP gap</th><th class="num">Time limit</th></tr></thead>
+        <tbody>
+          <tr><td>1A</td><td class="num">0.5%</td><td class="num">30 s</td></tr>
+          <tr><td>1B</td><td class="num">0.5%</td><td class="num">30 s</td></tr>
+          <tr><td>2</td><td class="num">5%</td><td class="num">30 s</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- ROLLING -->
+    <section id="rolling">
+      <div class="label">05 · Optimise</div>
+      <h2>Rolling horizon</h2>
+      <p>Each day the model plans \(L = 7\) days ahead, implements only the first day, and re-plans the next morning with updated information.</p>
+      <ol class="steps">
+        <li><div>Build the window's bottles: every bottle still onboard (with its real remaining content \(R^0_b\) and age \(a^0_b\)) plus fresh candidates for each option.</div></li>
+        <li><div>Solve Stages 1A, 1B and 2 over \(\mathcal{T}_w\).</div></li>
+        <li><div>Implement day \(t_w\): its loadings, removals and onboard configuration.</div></li>
+        <li><div>Carry every bottle with \(y^{\text{on}}_{b,t_w} = 1\) into window \(w+1\). Unopened candidates are dropped and regenerated.</div></li>
+      </ol>
+      <p>The number of candidates per option is a safe upper bound that still works when onboard life is shorter than the time to empty a bottle:</p>
+      <div class="eq">\[ n_{h,j} = \max\Big(1,\ \sum_{t \in \mathcal{T}_w} \Big\lceil \frac{F_{h,t}}{\delta_{h,j}} \Big\rceil + 1\Big) \]</div>
+      <p class="note">Generating candidates inside each window keeps the model small. A full-year bottle index would need thousands of identities.</p>
+    </section>
+
+    <!-- CLOSED LOOP -->
+    <section id="closedloop">
+      <div class="label">06 · Execute</div>
+      <h2>Closed-loop evaluation</h2>
+      <p>A forecast-driven plan must be judged against what really happened, not against its own forecast. After each solve, day one's configuration is frozen and exposed to realised demand \(D_{h,t}\). Let \(\mathcal{B}^{\text{on}}_t\) be the bottles onboard and \(A_b = R_{b,t-1} + \delta_b o_{b,t}\) their available content.</p>
+
+      <h3><span class="stagehead">Execution E1</span> · serve as much realised demand as possible</h3>
+      <div class="eq">\[ U^{a\ast} = \min \sum_h U^a_h \quad \text{s.t.} \quad 0 \le x_b \le A_b,\quad \sum_{b \in \mathcal{B}_j \cap \mathcal{B}^{\text{on}}_t} x_b \le \Theta_j,\quad \sum_{b \in \mathcal{B}_h \cap \mathcal{B}^{\text{on}}_t} x_b + U^a_h = D_{h,t} \]</div>
+
+      <h3><span class="stagehead">Execution E2</span> · stay close to the plan</h3>
+      <div class="eq">\[ \min \sum_{b} \big(e^{+}_b + e^{-}_b\big) \quad \text{s.t.} \quad x_b - \hat v_b = e^{+}_b - e^{-}_b,\quad \sum_h U^a_h \le U^{a\ast},\quad \text{E1 constraints} \]</div>
+      <p>\(\hat v_b\) is the planned consumption. The evaluator may not open or remove bottles after seeing actual demand. The realised remaining content \(A_b - x_b\) carries into the next planning day.</p>
+
+      <div class="callout">
+        <div class="label">Experiment 1 · 1 to 15 April 2024</div>
+        <p>Planning from out-of-sample LightGBM forecasts served 99.854% of 106,840 realised tests. A perfect-information plan served 100%. The forecast-driven plan left 156 more tests uncovered and opened 4 more bottles (244 against 240). This gap is the operational cost of forecast error for the same optimiser.</p>
+      </div>
+    </section>
+
+    <!-- VNV -->
+    <section id="vnv">
+      <div class="label">07 · Verification and validation</div>
+      <h2>Verification on a synthetic instance</h2>
+      <p>Before any real data, the frozen model was run on a designed instance: two modules, three tests, fictional dates in 2099. TestX has options on both modules, TestY and TestZ on one each, and TestZ's short onboard life forces predictable waste. The data are simple; the model logic is identical.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Check</th><th>What it confirms</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td>V1</td><td>Demand balance holds every day</td><td class="pass">PASS</td></tr>
+          <tr><td>V2</td><td>Reported service level is computed correctly</td><td class="pass">PASS</td></tr>
+          <tr><td>V3</td><td>Module capacity is never exceeded</td><td class="pass">PASS</td></tr>
+          <tr><td>V4</td><td>An expired bottle never remains onboard</td><td class="pass">PASS</td></tr>
+          <tr><td>V5</td><td>Waste log and summary totals agree</td><td class="pass">PASS</td></tr>
+          <tr><td>V6</td><td>Stage 1 service is preserved into Stage 2</td><td class="pass">PASS</td></tr>
+          <tr><td>V7</td><td>Solver status and gap logged for every window</td><td class="pass">PASS</td></tr>
+          <tr><td>V8</td><td>State exclusivity and legal transitions</td><td class="pass">PASS</td></tr>
+          <tr><td>V9</td><td>Bottle-level material conservation</td><td class="pass">PASS</td></tr>
+          <tr><td>V10</td><td>Carryover identity is contiguous across windows</td><td class="pass">PASS</td></tr>
+          <tr><td>V11</td><td>Reproduces a hand-derived answer on a known instance</td><td class="pass">PASS</td></tr>
+        </tbody>
+      </table></div>
+      <p>Four behavioural scenarios, each with its expected outcome written down in advance: module outage, removal of a reagent option, shortened onboard life, and a demand increase.</p>
+    </section>
+
+    <!-- EXPERIMENTS -->
+    <section id="experiments">
+      <div class="label">08 · Real-data campaign</div>
+      <h2>Experiment families</h2>
+      <p>All experiments use the closed-loop evaluator, the same 30-second budget per stage, and restore the baseline after each scenario.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>ID</th><th>Family</th><th>Scenarios</th></tr></thead>
+        <tbody>
+          <tr><td>E1</td><td>Forecast against perfect information</td><td>LightGBM OOS, oracle</td></tr>
+          <tr><td>E2</td><td>Planning horizon</td><td>1, 3, 5, 7 days</td></tr>
+          <tr><td>E4</td><td>Demand volume stress</td><td>80% to 150%</td></tr>
+          <tr><td>E5</td><td>Systematic forecast bias</td><td>−30% to +30%</td></tr>
+          <tr><td>E6</td><td>Random forecast error</td><td>σ = 5, 10, 20, 30%, three seeds each</td></tr>
+          <tr><td>E7</td><td>Module outage</td><td>single and paired unit outages</td></tr>
+          <tr><td>E8</td><td>Slot capacity restriction</td><td>100% down to 60%</td></tr>
+          <tr><td>E9</td><td>Onboard life</td><td>×0.50 to ×1.50</td></tr>
+          <tr><td>E10</td><td>Bottle yield</td><td>×0.8 to ×1.2</td></tr>
+          <tr><td>E11</td><td>Opening weight \(\lambda_d\)</td><td>0 to 10,000</td></tr>
+          <tr><td>E12</td><td>Loss weight \(\lambda_\ell\)</td><td>0, 10, 30, 50, 100</td></tr>
+          <tr><td>E13</td><td>Stage 2 ablation</td><td>cost only, openings only, loss only, full</td></tr>
+          <tr><td>E14</td><td>Starting state</td><td>cold start, depleted, near expiry and others</td></tr>
+          <tr><td>E15</td><td>Combined stress</td><td>3 demand × 3 bias × 4 module states = 36</td></tr>
+          <tr><td>E16</td><td>Service failure boundary</td><td>demand raised to 250%</td></tr>
+        </tbody>
+      </table></div>
+      <p class="note">E3, a forecast-model comparison inside the optimiser, was excluded: the saved prediction files did not share a complete common calendar. The forecasting comparison is reported separately.</p>
+    </section>
+
+    <!-- PARAMS -->
+    <section id="params">
+      <div class="label">09 · Case laboratory</div>
+      <h2>Case parameters</h2>
+      <p>Two cobas 8000 instruments. Each carries one c502, one c702 and one e801 module; the second instrument has an additional e801.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Module</th><th class="num">Units</th><th class="num">Slots per unit</th><th class="num">\(RK_j\)</th><th class="num">Tests per hour per unit</th><th class="num">\(\Theta_j\) (8 h)</th></tr></thead>
+        <tbody>
+          <tr><td>c502</td><td class="num">2</td><td class="num">60</td><td class="num">120</td><td class="num">600</td><td class="num">9,600</td></tr>
+          <tr><td>c702</td><td class="num">2</td><td class="num">70</td><td class="num">140</td><td class="num">2,000</td><td class="num">32,000</td></tr>
+          <tr><td>e801</td><td class="num">3</td><td class="num">48</td><td class="num">144</td><td class="num">300</td><td class="num">7,200</td></tr>
+        </tbody>
+      </table></div>
+      <p>Yield, onboard life and bottle cost per reagent option come from the laboratory's reagent catalogue. Look-ahead \(L = 7\) days, discount \(\rho = 0.98\), one spare candidate per option.</p>
+    </section>
+
+    <!-- PHD -->
+    <section id="phd">
+      <div class="label">10 · What the conversion adds</div>
+      <h2>Doctoral phase</h2>
+      <p>The integrated predict-then-optimise pipeline above is complete. The doctoral phase builds on it with two further components.</p>
+      <ol class="steps">
+        <li><div><strong>Scenario simulation model.</strong> A rule-based model of current laboratory practice, so DSRM can be compared against how bottles are loaded today under the same demand.</div></li>
+        <li><div><strong>Operating conditions characterisation.</strong> A methodology for describing a laboratory's operating conditions and showing under which conditions DSRM adds the most value, using the case laboratory as the stable baseline.</div></li>
+      </ol>
+    </section>
+  </main>
+</div>
+
+<footer class="band">
+  <div class="inner">
+    <span>Emma · Stellenbosch University · Industrial Engineering</span>
+    <span>Formulation: frozen synthetic V11, ported unchanged to real data</span>
+  </div>
+</footer>
+</body>
+</html>
